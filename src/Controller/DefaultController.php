@@ -32,7 +32,7 @@ class DefaultController extends Controller
         $client = new Client();
 
         try {
-            $res = $client->request('GET', $this->apiHandler->serveUrlRequest($url));
+            $res = $client->post($this->apiHandler->serveUrlRequest($url), $this->getStats());
         } catch (ClientException $ex) {
             throw $this->createNotFoundException();
         }
@@ -51,5 +51,13 @@ class DefaultController extends Controller
         }
 
         throw $this->createNotFoundException();
+    }
+
+    private function getStats() {
+        return [
+            'form_params' => [
+                'ip' => $this->container->get('request_stack')->getCurrentRequest()->getClientIp(),
+            ]
+        ];
     }
 }
