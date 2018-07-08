@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Services\Api\ApiHandler;
+use App\Services\DeviceDetection\DeviceDetectorHelper;
 use App\Services\Validation\UrlValidator;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\ClientException;
@@ -54,9 +55,12 @@ class DefaultController extends Controller
     }
 
     private function getStats() {
+        $deviceDetector = new DeviceDetectorHelper($this->get('mobile_detect.mobile_detector'));
+
         return [
             'form_params' => [
                 'ip' => $this->container->get('request_stack')->getCurrentRequest()->getClientIp(),
+                'device' => $deviceDetector->getDevice(),
             ]
         ];
     }
