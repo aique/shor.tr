@@ -9,6 +9,7 @@ use GuzzleHttp\Client;
 use GuzzleHttp\Exception\ClientException;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 
 class DefaultController extends Controller
@@ -29,11 +30,11 @@ class DefaultController extends Controller
     /**
      * @Route("/{url}", name="serve_url")
      */
-    public function serveUrl($url) {
+    public function serveUrl(Request $request, $url) {
         $client = new Client();
 
         try {
-            $res = $client->post($this->apiHandler->serveUrlRequest($url), $this->getStats());
+            $res = $client->post($this->apiHandler->serveUrlRequest($url), $this->getStats($request));
         } catch (ClientException $ex) {
             throw $this->createNotFoundException();
         }
@@ -54,13 +55,14 @@ class DefaultController extends Controller
         throw $this->createNotFoundException();
     }
 
-    private function getStats() {
+    private function getStats(Request $request) {
         $deviceDetector = new DeviceDetectorHelper($this->get('mobile_detect.mobile_detector'));
 
         return [
             'form_params' => [
                 'ip' => $this->container->get('request_stack')->getCurrentRequest()->getClientIp(),
                 'device' => $deviceDetector->getDevice(),
+                'referer' => $request->headers->get('referer'),
             ]
         ];
     }
