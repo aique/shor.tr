@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Services\Api;
+namespace App\Services;
 
 /**
  * Clase que facilita la composición de urls para las peticiones a la api.

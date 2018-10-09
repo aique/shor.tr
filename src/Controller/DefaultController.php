@@ -2,13 +2,13 @@
 
 namespace App\Controller;
 
-use App\Services\Api\ApiHandler;
-use App\Services\DeviceDetection\DeviceDetectorHelper;
-use App\Services\Validation\UrlValidator;
+use App\Services\ApiHandler;
+use App\Services\DeviceDetector;
+use App\Services\UrlValidator;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\ClientException;
+use Psr\Http\Message\ResponseInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 
@@ -31,6 +31,18 @@ class DefaultController extends Controller
      * @Route("/{url}", name="serve_url")
      */
     public function serveUrl(Request $request, $url) {
+        $res = $this->getShortlinkApiResponse($request, $url);
+        $requestedUrl = $this->getUrlFromResponse($res);
+        $urlValidator = new UrlValidator();
+
+        if ($urlValidator->validate($requestedUrl)) {
+            return $this->redirect($requestedUrl);
+        }
+
+        throw $this->createNotFoundException();
+    }
+
+    private function getShortlinkApiResponse(Request $request, $url) {
         $client = new Client();
 
         try {
@@ -39,24 +51,21 @@ class DefaultController extends Controller
             throw $this->createNotFoundException();
         }
 
+        return $res;
+    }
+
+    private function getUrlFromResponse(ResponseInterface $res) {
         $body = json_decode($res->getBody(), true);
 
         if (!isset($body['url'])) {
             throw $this->createNotFoundException();
         }
 
-        $requestedUrl = $body['url'];
-        $urlValidator = new UrlValidator($requestedUrl);
-
-        if ($urlValidator->validate()) {
-            return $this->redirect($requestedUrl);
-        }
-
-        throw $this->createNotFoundException();
+        return $body['url'];
     }
 
     private function getStats(Request $request) {
-        $deviceDetector = new DeviceDetectorHelper($this->get('mobile_detect.mobile_detector'));
+        $deviceDetector = new DeviceDetector($this->get('mobile_detect.mobile_detector'));
 
         return [
             'form_params' => [

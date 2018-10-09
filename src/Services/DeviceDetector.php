@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Services\DeviceDetection;
+namespace App\Services;
 
 use SunCat\MobileDetectBundle\DeviceDetector\MobileDetector;
 
-class DeviceDetectorHelper
+class DeviceDetector
 {
     const MOBILE_DEVICE = 'mobile';
     const TABLET_DEVICE = 'tablet';

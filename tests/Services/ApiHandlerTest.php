@@ -2,7 +2,7 @@
 
 namespace App\Tests\Services;
 
-use App\Services\Api\ApiHandler;
+use App\Services\ApiHandler;
 use PHPUnit\Framework\TestCase;
 
 class ApiHandlerTest extends TestCase {
