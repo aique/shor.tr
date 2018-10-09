@@ -8,12 +8,14 @@ namespace App\Services\Api;
 class ApiHandler
 {
     private $apiUrl;
+    private $apiPath;
 
-    public function __construct($apiUrl) {
+    public function __construct($apiUrl, $apiPath) {
         $this->apiUrl = $apiUrl;
+        $this->apiPath = $apiPath;
     }
 
     public function serveUrlRequest($url) {
-        return $this->apiUrl.'/api/shortlink/'.$url;
+        return $this->apiUrl.$this->apiPath.$url;
     }
 }

@@ -1,0 +1,4 @@
+parameters:
+    locale: 'en'
+    api_url: 'http://shor.tr/mock/'
+    api_path: ''

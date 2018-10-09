@@ -2,7 +2,8 @@
 # https://symfony.com/doc/current/best_practices/configuration.html#application-related-configuration
 parameters:
     locale: 'en'
-    api_url: 'http://admin.shor.tr'
+    api_url: 'http://admin.shor.tr/'
+    api_path: 'api/shortlink/'
 
 services:
     # default configuration for services in *this* file
@@ -14,6 +15,7 @@ services:
                             # The best practice is to be explicit about your dependencies anyway.
         bind:
             $apiUrl: '%api_url%'
+            $apiPath: '%api_path%'
 
     App\:
         resource: '../src/*'
